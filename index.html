@@ -1,0 +1,1234 @@
+<!doctype html>
+<html lang="id" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIG Wisata Kabupaten Sukabumi</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    * {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .gradient-hero {
+      background: linear-gradient(135deg, #065f46 0%, #047857 30%, #0d9488 60%, #0891b2 100%);
+    }
+    .map-container {
+      background: linear-gradient(180deg, #ecfdf5 0%, #f0fdfa 50%, #e0f2fe 100%);
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+    }
+    .animate-float {
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .marker-pulse {
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.8; }
+    }
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+    .category-card:hover {
+      transform: scale(1.02);
+    }
+    .destination-card:hover {
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full bg-white">
+  <div id="app" class="w-full h-full overflow-auto">
+    
+    <!-- Navigation -->
+   <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+     <div class="flex items-center justify-between h-16">
+      <div class="flex items-center gap-3">
+       <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-600 to-teal-500 flex items-center justify-center">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+       </div><span class="font-bold text-emerald-800 text-lg hidden sm:block">SIG Wisata Sukabumi</span>
+      </div>
+      <div class="hidden md:flex items-center gap-8"><a href="#peta" class="text-gray-600 hover:text-emerald-600 transition font-medium">Peta</a> <a href="#kategori" class="text-gray-600 hover:text-emerald-600 transition font-medium">Kategori</a> <a href="#destinasi" class="text-gray-600 hover:text-emerald-600 transition font-medium">Destinasi</a> <a href="#statistik" class="text-gray-600 hover:text-emerald-600 transition font-medium">Statistik</a> <a href="#tentang" class="text-gray-600 hover:text-emerald-600 transition font-medium">Tentang</a> <a href="#kontak" class="px-5 py-2 bg-emerald-600 text-white rounded-full hover:bg-emerald-700 transition font-medium">Kontak</a>
+      </div><button id="mobileMenuBtn" class="md:hidden p-2 text-gray-600">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+       </svg></button>
+     </div>
+    </div>
+    
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden md:hidden bg-white border-t">
+     <div class="px-4 py-3 space-y-2"><a href="#peta" class="block py-2 text-gray-600 hover:text-emerald-600">Peta</a> <a href="#kategori" class="block py-2 text-gray-600 hover:text-emerald-600">Kategori</a> <a href="#destinasi" class="block py-2 text-gray-600 hover:text-emerald-600">Destinasi</a> <a href="#statistik" class="block py-2 text-gray-600 hover:text-emerald-600">Statistik</a> <a href="#tentang" class="block py-2 text-gray-600 hover:text-emerald-600">Tentang</a> <a href="#kontak" class="block py-2 text-gray-600 hover:text-emerald-600">Kontak</a>
+     </div>
+    </div>
+   </nav>
+   
+   <!-- Hero Section -->
+   <section class="gradient-hero pt-24 pb-16 md:pt-32 md:pb-24 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+     <svg class="w-full h-full" viewbox="0 0 100 100" preserveaspectratio="none"><pattern id="grid" width="10" height="10" patternunits="userSpaceOnUse">
+       <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.5" />
+      </pattern> <rect width="100" height="100" fill="url(#grid)" />
+     </svg>
+    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+     <div class="text-center">
+      <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur px-4 py-2 rounded-full mb-6"><span class="w-2 h-2 bg-green-300 rounded-full animate-pulse"></span> <span class="text-white/90 text-sm font-medium">Sistem Informasi Geografis</span>
+      </div>
+      <h1 id="heroTitle" class="text-4xl md:text-6xl font-extrabold text-white mb-4 leading-tight">SIG Wisata<br>
+       Kabupaten Sukabumi</h1>
+      <p id="heroSubtitle" class="text-lg md:text-xl text-white/90 max-w-2xl mx-auto mb-8">Pemetaan &amp; Informasi Destinasi Wisata Secara Digital</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center"><a href="#peta" class="px-8 py-4 bg-white text-emerald-700 rounded-full font-semibold hover:bg-emerald-50 transition shadow-lg"> 🗺️ Jelajahi Peta </a> <a href="#destinasi" class="px-8 py-4 bg-transparent border-2 border-white text-white rounded-full font-semibold hover:bg-white/10 transition"> 📍 Lihat Destinasi </a>
+      </div>
+     </div>
+     <!-- Floating Elements -->
+     <div class="absolute top-20 left-10 animate-float hidden lg:block">
+      <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-3xl">
+       🏔️
+      </div>
+     </div>
+     <div class="absolute top-40 right-10 animate-float hidden lg:block" style="animation-delay: 1s;">
+      <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-3xl">
+       🏖️
+      </div>
+     </div>
+     <div class="absolute bottom-10 left-20 animate-float hidden lg:block" style="animation-delay: 2s;">
+      <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-3xl">
+       🌊
+      </div>
+     </div>
+    </div>
+   </section>
+   
+   <!-- Interactive Map Section -->
+   <section id="peta" class="py-16 md:py-24 map-container">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+     <div class="text-center mb-12"><span class="inline-block px-4 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium mb-4">Peta Interaktif</span>
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Peta Wisata Kabupaten Sukabumi</h2>
+      <p class="text-gray-600 max-w-2xl mx-auto">Klik pada marker untuk melihat informasi detail setiap destinasi wisata</p>
+     </div><!-- Map Container -->
+     <div class="relative bg-white rounded-3xl shadow-2xl overflow-hidden">
+      <div class="aspect-video md:aspect-[16/9] relative bg-cover bg-center"
+     style="background-image:url('https://images.unsplash.com/photo-1581091870627-3b6a59b3a7f2?q=80&w=1600');">
+<!-- SVG Map of Sukabumi -->
+       <svg viewbox="0 0 800 500" class="w-full h-full"><!-- Background --> <defs>
+         <lineargradient id="oceanGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#0ea5e9;stop-opacity:0.3" />
+          <stop offset="100%" style="stop-color:#0284c7;stop-opacity:0.5" />
+         </lineargradient>
+         <lineargradient id="landGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#86efac" />
+          <stop offset="50%" style="stop-color:#4ade80" />
+          <stop offset="100%" style="stop-color:#22c55e" />
+         </lineargradient>
+         <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+          <fedropshadow dx="0" dy="4" stddeviation="8" flood-color="#000" flood-opacity="0.15" />
+         </filter>
+        </defs> <!-- Ocean --> <rect x="0" y="350" width="800" height="150" fill="url(#oceanGrad)" /> <text x="400" y="420" text-anchor="middle" fill="#0369a1" font-size="14" font-weight="600" opacity="0.7">
+         SAMUDRA HINDIA
+        </text> <!-- Sukabumi Region Shape --> <path d="M100,200 Q150,150 250,140 Q350,130 450,150 Q550,170 650,200 Q700,230 700,280 Q680,330 600,350 Q500,370 400,360 Q300,350 200,340 Q120,320 100,280 Q80,240 100,200 Z" fill="url(#landGrad)" filter="url(#shadow)" class="cursor-pointer hover:brightness-105 transition" /> <!-- Region Label --> <text x="400" y="260" text-anchor="middle" fill="#166534" font-size="20" font-weight="700">
+         KABUPATEN SUKABUMI
+        </text> <text x="400" y="280" text-anchor="middle" fill="#166534" font-size="11" opacity="0.8">
+         Luas: 4.145,70 km²
+        </text> <!-- Mountain ranges --> <g opacity="0.6">
+         <path d="M200,180 L220,150 L240,180 Z" fill="#15803d" />
+         <path d="M230,185 L255,145 L280,185 Z" fill="#166534" />
+         <path d="M500,160 L530,120 L560,160 Z" fill="#15803d" />
+         <path d="M530,165 L560,130 L590,165 Z" fill="#166534" />
+        </g> <!-- Destination Markers --> <!-- Pantai Pelabuhan Ratu --> <g class="cursor-pointer marker-group" data-dest="pelabuhan-ratu" onclick="showDestination('pelabuhan-ratu')">
+         <circle cx="300" cy="340" r="20" fill="#0ea5e9" class="marker-pulse" opacity="0.3" />
+         <circle cx="300" cy="340" r="12" fill="#0ea5e9" stroke="white" stroke-width="3" />
+         <text x="300" y="345" text-anchor="middle" fill="white" font-size="10">
+          🏖️
+         </text>
+         <text x="300" y="365" text-anchor="middle" fill="#0369a1" font-size="9" font-weight="600">
+          Pelabuhan Ratu
+         </text>
+        </g> <!-- Gunung Gede Pangrango --> <g class="cursor-pointer marker-group" data-dest="gede-pangrango" onclick="showDestination('gede-pangrango')">
+         <circle cx="250" cy="170" r="20" fill="#22c55e" class="marker-pulse" opacity="0.3" />
+         <circle cx="250" cy="170" r="12" fill="#22c55e" stroke="white" stroke-width="3" />
+         <text x="250" y="175" text-anchor="middle" fill="white" font-size="10">
+          🏔️
+         </text>
+         <text x="250" y="195" text-anchor="middle" fill="#166534" font-size="9" font-weight="600">
+          Gede Pangrango
+         </text>
+        </g> <!-- Curug Sawer --> <g class="cursor-pointer marker-group" data-dest="curug-sawer" onclick="showDestination('curug-sawer')">
+         <circle cx="450" cy="200" r="20" fill="#06b6d4" class="marker-pulse" opacity="0.3" />
+         <circle cx="450" cy="200" r="12" fill="#06b6d4" stroke="white" stroke-width="3" />
+         <text x="450" y="205" text-anchor="middle" fill="white" font-size="10">
+          💧
+         </text>
+         <text x="450" y="225" text-anchor="middle" fill="#0e7490" font-size="9" font-weight="600">
+          Curug Sawer
+         </text>
+        </g> <!-- Geopark Ciletuh --> <g class="cursor-pointer marker-group" data-dest="ciletuh" onclick="showDestination('ciletuh')">
+         <circle cx="550" cy="300" r="20" fill="#f59e0b" class="marker-pulse" opacity="0.3" />
+         <circle cx="550" cy="300" r="12" fill="#f59e0b" stroke="white" stroke-width="3" />
+         <text x="550" y="305" text-anchor="middle" fill="white" font-size="10">
+          🌋
+         </text>
+         <text x="550" y="325" text-anchor="middle" fill="#b45309" font-size="9" font-weight="600">
+          Geopark Ciletuh
+         </text>
+        </g> <!-- Pantai Karang Hawu --> <g class="cursor-pointer marker-group" data-dest="karang-hawu" onclick="showDestination('karang-hawu')">
+         <circle cx="400" cy="350" r="20" fill="#8b5cf6" class="marker-pulse" opacity="0.3" />
+         <circle cx="400" cy="350" r="12" fill="#8b5cf6" stroke="white" stroke-width="3" />
+         <text x="400" y="355" text-anchor="middle" fill="white" font-size="10">
+          🪨
+         </text>
+         <text x="400" y="375" text-anchor="middle" fill="#7c3aed" font-size="9" font-weight="600">
+          Karang Hawu
+         </text>
+        </g> <!-- Situ Gunung --> <g class="cursor-pointer marker-group" data-dest="situ-gunung" onclick="showDestination('situ-gunung')">
+         <circle cx="350" cy="190" r="20" fill="#10b981" class="marker-pulse" opacity="0.3" />
+         <circle cx="350" cy="190" r="12" fill="#10b981" stroke="white" stroke-width="3" />
+         <text x="350" y="195" text-anchor="middle" fill="white" font-size="10">
+          🌲
+         </text>
+         <text x="350" y="215" text-anchor="middle" fill="#059669" font-size="9" font-weight="600">
+          Situ Gunung
+         </text>
+        </g> <!-- Compass --> <g transform="translate(720, 80)">
+         <circle cx="0" cy="0" r="30" fill="white" stroke="#e5e7eb" stroke-width="2" />
+         <polygon points="0,-20 5,-5 0,5 -5,-5" fill="#ef4444" />
+         <polygon points="0,20 5,5 0,-5 -5,5" fill="#374151" />
+         <text x="0" y="-22" text-anchor="middle" fill="#ef4444" font-size="8" font-weight="bold">
+          U
+         </text>
+        </g> <!-- Scale --> <g transform="translate(50, 450)">
+         <rect x="0" y="0" width="100" height="4" fill="#374151" />
+         <rect x="0" y="0" width="50" height="4" fill="white" />
+         <text x="0" y="15" fill="#374151" font-size="9">
+          0
+         </text>
+         <text x="50" y="15" fill="#374151" font-size="9">
+          25
+         </text>
+         <text x="100" y="15" fill="#374151" font-size="9">
+          50 km
+         </text>
+        </g>
+       </svg>
+       
+       <!-- Map Legend -->
+       <div class="absolute bottom-4 right-4 bg-white/95 backdrop-blur rounded-xl p-4 shadow-lg">
+        <h4 class="font-semibold text-gray-800 text-sm mb-3">Legenda</h4>
+        <div class="space-y-2 text-xs">
+         <div class="flex items-center gap-2"><span class="w-4 h-4 rounded-full bg-sky-500"></span> <span class="text-gray-600">Pantai</span>
+         </div>
+         <div class="flex items-center gap-2"><span class="w-4 h-4 rounded-full bg-green-500"></span> <span class="text-gray-600">Gunung</span>
+         </div>
+         <div class="flex items-center gap-2"><span class="w-4 h-4 rounded-full bg-cyan-500"></span> <span class="text-gray-600">Air Terjun</span>
+         </div>
+         <div class="flex items-center gap-2"><span class="w-4 h-4 rounded-full bg-amber-500"></span> <span class="text-gray-600">Geopark</span>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+     
+     <!-- Destination Info Popup -->
+     <div id="destPopup" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+      <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90%] overflow-auto shadow-2xl">
+       <div id="destContent" class="p-6"><!-- Content will be inserted here -->
+       </div>
+      </div>
+     </div>
+    </div>
+   </section>
+   
+   <!-- Categories Section -->
+   <section id="kategori" class="py-16 md:py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+     <div class="text-center mb-12"><span class="inline-block px-4 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-medium mb-4">Kategori</span>
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Jenis Wisata</h2>
+      <p class="text-gray-600 max-w-2xl mx-auto">Temukan berbagai jenis destinasi wisata yang dapat Anda kunjungi di Kabupaten Sukabumi</p>
+     </div>
+     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6"><!-- Wisata Alam -->
+      <div class="category-card bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl p-6 text-white cursor-pointer transition-all duration-300 hover:shadow-xl" onclick="filterCategory('alam')">
+       <div class="text-4xl mb-4">
+        🏞️
+       </div>
+       <h3 class="font-bold text-lg mb-2">Wisata Alam</h3>
+       <p class="text-white/80 text-sm">Pantai, gunung, air terjun, dan keindahan alam lainnya</p>
+       <div class="mt-4 flex items-center gap-2 text-sm"><span class="bg-white/20 px-3 py-1 rounded-full">25+ Lokasi</span>
+       </div>
+      </div><!-- Wisata Budaya -->
+      <div class="category-card bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl p-6 text-white cursor-pointer transition-all duration-300 hover:shadow-xl" onclick="filterCategory('budaya')">
+       <div class="text-4xl mb-4">
+        🏛️
+       </div>
+       <h3 class="font-bold text-lg mb-2">Wisata Budaya</h3>
+       <p class="text-white/80 text-sm">Situs sejarah, tradisi, dan warisan budaya Sunda</p>
+       <div class="mt-4 flex items-center gap-2 text-sm"><span class="bg-white/20 px-3 py-1 rounded-full">12+ Lokasi</span>
+       </div>
+      </div><!-- Wisata Edukasi -->
+      <div class="category-card bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-6 text-white cursor-pointer transition-all duration-300 hover:shadow-xl" onclick="filterCategory('edukasi')">
+       <div class="text-4xl mb-4">
+        📚
+       </div>
+       <h3 class="font-bold text-lg mb-2">Wisata Edukasi</h3>
+       <p class="text-white/80 text-sm">Geopark, museum, dan pusat pembelajaran</p>
+       <div class="mt-4 flex items-center gap-2 text-sm"><span class="bg-white/20 px-3 py-1 rounded-full">8+ Lokasi</span>
+       </div>
+      </div><!-- Wisata Kuliner -->
+      <div class="category-card bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl p-6 text-white cursor-pointer transition-all duration-300 hover:shadow-xl" onclick="filterCategory('kuliner')">
+       <div class="text-4xl mb-4">
+        🍜
+       </div>
+       <h3 class="font-bold text-lg mb-2">Wisata Kuliner</h3>
+       <p class="text-white/80 text-sm">Kuliner khas dan pusat oleh-oleh Sukabumi</p>
+       <div class="mt-4 flex items-center gap-2 text-sm"><span class="bg-white/20 px-3 py-1 rounded-full">15+ Lokasi</span>
+       </div>
+      </div>
+      
+      <!-- Modal Detail Wisata -->
+<div id="kategoriModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50">
+  <div class="bg-white max-w-4xl w-full mx-4 rounded-2xl shadow-xl overflow-y-auto max-h-[90vh]">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center p-6 border-b">
+      <h3 id="modalTitle" class="text-2xl font-bold text-gray-800"></h3>
+      <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 text-2xl">&times;</button>
+    </div>
+
+    <!-- Content -->
+    <div id="modalContent" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Diisi JS -->
+    </div>
+
+  </div>
+</div>
+
+     </div>
+    </div>
+   </section>
+   
+   <!-- Destinations Section -->
+   <section id="destinasi" class="py-16 md:py-24 bg-gradient-to-b from-gray-50 to-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+     <div class="text-center mb-12"><span class="inline-block px-4 py-1 bg-cyan-100 text-cyan-700 rounded-full text-sm font-medium mb-4">Destinasi Populer</span>
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Tempat Wisata Unggulan</h2>
+      <p class="text-gray-600 max-w-2xl mx-auto">Jelajahi destinasi wisata terbaik di Kabupaten Sukabumi</p>
+     </div>
+     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="destinationGrid"><!-- Geopark Ciletuh -->
+      <div class="destination-card bg-white rounded-2xl overflow-hidden shadow-lg transition-all duration-300 group">
+       <div class="aspect-video relative overflow-hidden bg-gray-200"><img src="ciletuh.jpg" alt="Geopark Ciletuh-Palabuhanratu" loading="lazy" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="console.error('Image failed to load:', this.src); this.style.background='linear-gradient(135deg, #fbbf24, #f59e0b)'; this.alt='Image unavailable';">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+        <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-semibold text-amber-700">
+         UNESCO Global Geopark
+        </div>
+        <div class="absolute bottom-4 left-4 right-4">
+         <div class="flex items-center justify-between">
+          <div class="bg-amber-500 backdrop-blur px-3 py-1 rounded-full text-xs text-white font-bold">
+           💰 Rp 20.000
+          </div>
+          <div class="bg-black/50 backdrop-blur px-3 py-1 rounded-full text-xs text-white flex items-center gap-1">
+           <svg class="w-3 h-3" fill="currentColor" viewbox="0 0 24 24">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+           </svg> 📍 Ciletuh
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="p-5">
+        <h3 class="font-bold text-lg text-gray-800 mb-2">Geopark Ciletuh-Palabuhanratu</h3>
+        <p class="text-gray-600 text-sm mb-4">Kawasan geopark dengan keindahan bentang alam bersejarah, tebing amphitheater, dan pantai eksotis.</p>
+        <div class="flex flex-wrap gap-2 mb-4"><span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs">🅿️ Parkir</span> <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">🚻 Toilet</span> <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs">🍽️ Warung</span> <span class="px-2 py-1 bg-orange-100 text-orange-700 rounded-full text-xs">📷 Spot Foto</span>
+        </div><button class="w-full py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-medium transition" onclick="showDestination('ciletuh')"> Lihat Detail </button>
+       </div>
+      </div>
+      
+      <!-- Pantai Pelabuhan Ratu -->
+      <div class="destination-card bg-white rounded-2xl overflow-hidden shadow-lg transition-all duration-300 group">
+       <div class="aspect-video relative overflow-hidden bg-gray-200"><img src="pelabuhan ratu.jpg" alt="Pantai Pelabuhan Ratu" loading="lazy" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="console.error('Image failed to load:', this.src); this.style.background='linear-gradient(135deg, #38bdf8, #0ea5e9)'; this.alt='Image unavailable';">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+        <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-semibold text-sky-700">
+         Pantai Ikonik
+        </div>
+        <div class="absolute bottom-4 left-4 right-4">
+         <div class="flex items-center justify-between">
+          <div class="bg-sky-500 backdrop-blur px-3 py-1 rounded-full text-xs text-white font-bold">
+           💰 Rp 10.000
+          </div>
+          <div class="bg-black/50 backdrop-blur px-3 py-1 rounded-full text-xs text-white flex items-center gap-1">
+           <svg class="w-3 h-3" fill="currentColor" viewbox="0 0 24 24">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+           </svg> 📍 Pelabuhan Ratu
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="p-5">
+        <h3 class="font-bold text-lg text-gray-800 mb-2">Pantai Pelabuhan Ratu</h3>
+        <p class="text-gray-600 text-sm mb-4">Pantai legendaris dengan ombak besar dan legenda Nyi Roro Kidul. Destinasi favorit wisatawan.</p>
+        <div class="flex flex-wrap gap-2 mb-4"><span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs">🅿️ Parkir</span> <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">🏨 Hotel</span> <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs">🍽️ Restoran</span> <span class="px-2 py-1 bg-rose-100 text-rose-700 rounded-full text-xs">🏄 Surfing</span>
+        </div><button class="w-full py-2 bg-sky-500 hover:bg-sky-600 text-white rounded-xl font-medium transition" onclick="showDestination('pelabuhan-ratu')"> Lihat Detail </button>
+       </div>
+      </div>
+      
+      <!-- Gunung Gede Pangrango -->
+      <div class="destination-card bg-white rounded-2xl overflow-hidden shadow-lg transition-all duration-300 group">
+       <div class="aspect-video relative overflow-hidden bg-gray-200"><img src="gunung gede.jpg" alt="Taman Nasional Gunung Gede Pangrango" loading="lazy" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="console.error('Image failed to load:', this.src); this.style.background='linear-gradient(135deg, #34d399, #10b981)'; this.alt='Image unavailable';">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+        <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-semibold text-emerald-700">
+         Taman Nasional
+        </div>
+        <div class="absolute bottom-4 left-4 right-4">
+         <div class="flex items-center justify-between">
+          <div class="bg-emerald-500 backdrop-blur px-3 py-1 rounded-full text-xs text-white font-bold">
+           💰 Rp 29.000
+          </div>
+          <div class="bg-black/50 backdrop-blur px-3 py-1 rounded-full text-xs text-white flex items-center gap-1">
+           <svg class="w-3 h-3" fill="currentColor" viewbox="0 0 24 24">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+           </svg> 📍 TNGGP
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="p-5">
+        <h3 class="font-bold text-lg text-gray-800 mb-2">Taman Nasional Gede Pangrango</h3>
+        <p class="text-gray-600 text-sm mb-4">Kawasan konservasi dengan jalur pendakian menantang dan keindahan padang edelweiss di puncak.</p>
+        <div class="flex flex-wrap gap-2 mb-4"><span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs">🏕️ Camping</span> <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">🥾 Hiking</span> <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs">🦜 Satwa</span> <span class="px-2 py-1 bg-teal-100 text-teal-700 rounded-full text-xs">🌸 Flora</span>
+        </div><button class="w-full py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-medium transition" onclick="showDestination('gede-pangrango')"> Lihat Detail </button>
+       </div>
+      </div>
+      
+      <!-- Situ Gunung -->
+      <div class="destination-card bg-white rounded-2xl overflow-hidden shadow-lg transition-all duration-300 group">
+       <div class="aspect-video relative overflow-hidden bg-gray-200"><img src="suspension.jpg" alt="Situ Gunung Suspension Bridge" loading="lazy" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="console.error('Image failed to load:', this.src); this.style.background='linear-gradient(135deg, #2dd4bf, #14b8a6)'; this.alt='Image unavailable';">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+        <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-semibold text-teal-700">
+         Suspension Bridge
+        </div>
+        <div class="absolute bottom-4 left-4 right-4">
+         <div class="flex items-center justify-between">
+          <div class="bg-teal-500 backdrop-blur px-3 py-1 rounded-full text-xs text-white font-bold">
+           💰 Rp 100.000
+          </div>
+          <div class="bg-black/50 backdrop-blur px-3 py-1 rounded-full text-xs text-white flex items-center gap-1">
+           <svg class="w-3 h-3" fill="currentColor" viewbox="0 0 24 24">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+           </svg> 📍 Situ Gunung
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="p-5">
+        <h3 class="font-bold text-lg text-gray-800 mb-2">Situ Gunung Suspension Bridge</h3>
+        <p class="text-gray-600 text-sm mb-4">Jembatan gantung terpanjang di Asia Tenggara dengan pemandangan danau dan hutan pinus yang menakjubkan.</p>
+        <div class="flex flex-wrap gap-2 mb-4"><span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs">🅿️ Parkir</span> <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">🚡 Jembatan</span> <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs">☕ Cafe</span> <span class="px-2 py-1 bg-orange-100 text-orange-700 rounded-full text-xs">📷 Spot Foto</span>
+        </div><button class="w-full py-2 bg-teal-500 hover:bg-teal-600 text-white rounded-xl font-medium transition" onclick="showDestination('situ-gunung')"> Lihat Detail </button>
+       </div>
+      </div>
+      
+      <!-- Curug Sawer -->
+      <div class="destination-card bg-white rounded-2xl overflow-hidden shadow-lg transition-all duration-300 group">
+       <div class="aspect-video relative overflow-hidden bg-gray-200"><img src="curug sawer.webp" alt="Curug Sawer" loading="lazy" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="console.error('Image failed to load:', this.src); this.style.background='linear-gradient(135deg, #22d3ee, #06b6d4)'; this.alt='Image unavailable';">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+        <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-semibold text-cyan-700">
+         Air Terjun
+        </div>
+        <div class="absolute bottom-4 left-4 right-4">
+         <div class="flex items-center justify-between">
+          <div class="bg-cyan-500 backdrop-blur px-3 py-1 rounded-full text-xs text-white font-bold">
+           💰 Rp 15.000
+          </div>
+          <div class="bg-black/50 backdrop-blur px-3 py-1 rounded-full text-xs text-white flex items-center gap-1">
+           <svg class="w-3 h-3" fill="currentColor" viewbox="0 0 24 24">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+           </svg> 📍 Curug Sawer
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="p-5">
+        <h3 class="font-bold text-lg text-gray-800 mb-2">Curug Sawer</h3>
+        <p class="text-gray-600 text-sm mb-4">Air terjun megah setinggi 80 meter yang berada di kawasan Taman Nasional Gunung Gede Pangrango.</p>
+        <div class="flex flex-wrap gap-2 mb-4"><span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs">🥾 Trekking</span> <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">🏊 Berenang</span> <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs">🌿 Alam</span>
+        </div><button class="w-full py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-xl font-medium transition" onclick="showDestination('curug-sawer')"> Lihat Detail </button>
+       </div>
+      </div>
+      
+      <!-- Pantai Karang Hawu -->
+      <div class="destination-card bg-white rounded-2xl overflow-hidden shadow-lg transition-all duration-300 group">
+       <div class="aspect-video relative overflow-hidden bg-gray-200"><img src="karang-hawu.webp" alt="Pantai Karang Hawu" loading="lazy" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="console.error('Image failed to load:', this.src); this.style.background='linear-gradient(135deg, #a78bfa, #8b5cf6)'; this.alt='Image unavailable';">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+        <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-semibold text-violet-700">
+         Formasi Batu Unik
+        </div>
+        <div class="absolute bottom-4 left-4 right-4">
+         <div class="flex items-center justify-between">
+          <div class="bg-violet-500 backdrop-blur px-3 py-1 rounded-full text-xs text-white font-bold">
+           💰 Rp 10.000
+          </div>
+          <div class="bg-black/50 backdrop-blur px-3 py-1 rounded-full text-xs text-white flex items-center gap-1">
+           <svg class="w-3 h-3" fill="currentColor" viewbox="0 0 24 24">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+           </svg> 📍 Karang Hawu
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="p-5">
+        <h3 class="font-bold text-lg text-gray-800 mb-2">Pantai Karang Hawu</h3>
+        <p class="text-gray-600 text-sm mb-4">Pantai eksotis dengan formasi batu karang vulkanik berbentuk tungku yang spektakuler.</p>
+        <div class="flex flex-wrap gap-2 mb-4"><span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs">🅿️ Parkir</span> <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">📷 Sunset</span> <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs">🍽️ Warung</span>
+        </div><button class="w-full py-2 bg-violet-500 hover:bg-violet-600 text-white rounded-xl font-medium transition" onclick="showDestination('karang-hawu')"> Lihat Detail </button>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section>
+   
+   <!-- Statistics Section -->
+   <section id="statistik" class="py-16 md:py-24 bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-600 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+     <svg class="w-full h-full" viewbox="0 0 100 100" preserveaspectratio="none"><pattern id="dots" width="5" height="5" patternunits="userSpaceOnUse">
+       <circle cx="2.5" cy="2.5" r="1" fill="white" />
+      </pattern> <rect width="100" height="100" fill="url(#dots)" />
+     </svg>
+    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+     <div class="text-center mb-12"><span class="inline-block px-4 py-1 bg-white/20 backdrop-blur text-white rounded-full text-sm font-medium mb-4">Statistik</span>
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Data Pariwisata Kabupaten Sukabumi</h2>
+      <p class="text-white/80 max-w-2xl mx-auto">Perkembangan sektor pariwisata dalam angka</p>
+     </div>
+     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+      <div class="stat-card bg-white/10 backdrop-blur rounded-2xl p-6 text-center transition-all duration-300 hover:bg-white/20">
+       <div class="text-4xl mb-3">
+        📍
+       </div>
+       <div class="text-4xl md:text-5xl font-bold text-white mb-2">
+        60+
+       </div>
+       <div class="text-white/80 text-sm">
+        Destinasi Wisata
+       </div>
+      </div>
+      <div class="stat-card bg-white/10 backdrop-blur rounded-2xl p-6 text-center transition-all duration-300 hover:bg-white/20">
+       <div class="text-4xl mb-3">
+        👥
+       </div>
+       <div class="text-4xl md:text-5xl font-bold text-white mb-2">
+        2.5M
+       </div>
+       <div class="text-white/80 text-sm">
+        Wisatawan/Tahun
+       </div>
+      </div>
+      <div class="stat-card bg-white/10 backdrop-blur rounded-2xl p-6 text-center transition-all duration-300 hover:bg-white/20">
+       <div class="text-4xl mb-3">
+        🏨
+       </div>
+       <div class="text-4xl md:text-5xl font-bold text-white mb-2">
+        150+
+       </div>
+       <div class="text-white/80 text-sm">
+        Akomodasi
+       </div>
+      </div>
+      <div class="stat-card bg-white/10 backdrop-blur rounded-2xl p-6 text-center transition-all duration-300 hover:bg-white/20">
+       <div class="text-4xl mb-3">
+        🌏
+       </div>
+       <div class="text-4xl md:text-5xl font-bold text-white mb-2">
+        4.145
+       </div>
+       <div class="text-white/80 text-sm">
+        km² Luas Wilayah
+       </div>
+      </div>
+     </div>
+     
+     <!-- Achievement Badges -->
+     <div class="mt-12 flex flex-wrap justify-center gap-4">
+      <div class="bg-white/20 backdrop-blur px-6 py-3 rounded-full flex items-center gap-3"><span class="text-2xl">🏆</span> <span class="text-white font-medium">UNESCO Global Geopark 2018</span>
+      </div>
+      <div class="bg-white/20 backdrop-blur px-6 py-3 rounded-full flex items-center gap-3"><span class="text-2xl">����</span> <span class="text-white font-medium">Taman Nasional Warisan Dunia</span>
+      </div>
+      <div class="bg-white/20 backdrop-blur px-6 py-3 rounded-full flex items-center gap-3"><span class="text-2xl">⭐</span> <span class="text-white font-medium">Top 10 Destinasi Jawa Barat</span>
+      </div>
+     </div>
+    </div>
+   </section>
+   
+   <!-- About Section -->
+   <section id="tentang" class="py-16 md:py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+     <div class="grid md:grid-cols-2 gap-12 items-center">
+      <div><span class="inline-block px-4 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium mb-4">Tentang</span>
+       <h2 id="aboutTitle" class="text-3xl md:text-4xl font-bold text-gray-800 mb-6">Tentang SIG Wisata Kabupaten Sukabumi</h2>
+       <div class="space-y-4 text-gray-600">
+        <p><strong>Sistem Informasi Geografis (SIG) Wisata Kabupaten Sukabumi</strong> adalah platform digital yang dikembangkan untuk memetakan dan menyajikan informasi destinasi wisata secara komprehensif.</p>
+        <p>Platform ini bertujuan untuk memudahkan wisatawan dalam menemukan, merencanakan, dan mengeksplorasi berbagai destinasi wisata di Kabupaten Sukabumi dengan informasi yang akurat dan terkini.</p>
+        <p>Dengan memanfaatkan teknologi pemetaan digital, SIG Wisata menyediakan data koordinat, fasilitas, aksesibilitas, dan informasi penting lainnya untuk setiap destinasi wisata.</p>
+       </div>
+       <div class="mt-8 grid grid-cols-2 gap-4">
+        <div class="bg-emerald-50 rounded-xl p-4">
+         <div class="text-emerald-600 text-2xl mb-2">
+          🎯
+         </div>
+         <h4 class="font-semibold text-gray-800 mb-1">Akurat</h4>
+         <p class="text-gray-600 text-sm">Data koordinat dan informasi yang terverifikasi</p>
+        </div>
+        <div class="bg-blue-50 rounded-xl p-4">
+         <div class="text-blue-600 text-2xl mb-2">
+          🔄
+         </div>
+         <h4 class="font-semibold text-gray-800 mb-1">Terkini</h4>
+         <p class="text-gray-600 text-sm">Informasi diperbarui secara berkala</p>
+        </div>
+        <div class="bg-teal-50 rounded-xl p-4">
+         <div class="text-teal-600 text-2xl mb-2">
+          ��
+         </div>
+         <h4 class="font-semibold text-gray-800 mb-1">Mudah Diakses</h4>
+         <p class="text-gray-600 text-sm">Dapat diakses dari berbagai perangkat</p>
+        </div>
+        <div class="bg-amber-50 rounded-xl p-4">
+         <div class="text-amber-600 text-2xl mb-2">
+          🗺️
+         </div>
+         <h4 class="font-semibold text-gray-800 mb-1">Interaktif</h4>
+         <p class="text-gray-600 text-sm">Peta yang dapat dieksplorasi langsung</p>
+        </div>
+       </div>
+      </div>
+      <div class="relative">
+       <div class="bg-gradient-to-br from-emerald-100 to-teal-100 rounded-3xl p-8 relative">
+        <div class="absolute -top-4 -right-4 w-24 h-24 bg-emerald-500 rounded-full opacity-20"></div>
+        <div class="absolute -bottom-4 -left-4 w-32 h-32 bg-teal-500 rounded-full opacity-20"></div>
+        <div class="relative space-y-4">
+         <div class="bg-white rounded-2xl p-4 shadow-lg flex items-center gap-4">
+          <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-2xl">
+           📊
+          </div>
+          <div>
+           <h4 class="font-semibold text-gray-800">Data Spasial</h4>
+           <p class="text-gray-600 text-sm">Koordinat geografis akurat</p>
+          </div>
+         </div>
+         <div class="bg-white rounded-2xl p-4 shadow-lg flex items-center gap-4">
+          <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-2xl">
+           🔍
+          </div>
+          <div>
+           <h4 class="font-semibold text-gray-800">Pencarian Mudah</h4>
+           <p class="text-gray-600 text-sm">Filter berdasarkan kategori</p>
+          </div>
+         </div>
+         <div class="bg-white rounded-2xl p-4 shadow-lg flex items-center gap-4">
+          <div class="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center text-2xl">
+           📝
+          </div>
+          <div>
+           <h4 class="font-semibold text-gray-800">Info Lengkap</h4>
+           <p class="text-gray-600 text-sm">Fasilitas, akses, dan ulasan</p>
+          </div>
+         </div>
+         <div class="bg-white rounded-2xl p-4 shadow-lg flex items-center gap-4">
+          <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center text-2xl">
+           🧭
+          </div>
+          <div>
+           <h4 class="font-semibold text-gray-800">Navigasi</h4>
+           <p class="text-gray-600 text-sm">Integrasi dengan Google Maps</p>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section>
+   
+   <!-- Contact Section -->
+   <section id="kontak" class="py-16 md:py-24 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+     <div class="text-center mb-12"><span class="inline-block px-4 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium mb-4">Kontak</span>
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Hubungi Kami</h2>
+      <p class="text-gray-600 max-w-2xl mx-auto">Untuk informasi lebih lanjut mengenai pariwisata Kabupaten Sukabumi</p>
+     </div>
+     <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+      <div class="bg-white rounded-2xl p-6 text-center shadow-lg hover:shadow-xl transition">
+       <div class="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">
+        📍
+       </div>
+       <h3 class="font-semibold text-gray-800 mb-2">Alamat</h3>
+       <p class="text-gray-600 text-sm">Jl. Siliwangi No. 1<br>
+        Palabuhanratu, Kabupaten Sukabumi<br>
+        Jawa Barat 43364</p>
+      </div>
+      <div class="bg-white rounded-2xl p-6 text-center shadow-lg hover:shadow-xl transition">
+       <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">
+        📞
+       </div>
+       <h3 class="font-semibold text-gray-800 mb-2">Telepon</h3>
+       <p id="contactPhone" class="text-gray-600 text-sm">(0266) 123456</p>
+       <p class="text-gray-600 text-sm mt-1">Senin - Jumat: 08.00 - 16.00 WIB</p>
+      </div>
+      <div class="bg-white rounded-2xl p-6 text-center shadow-lg hover:shadow-xl transition">
+       <div class="w-16 h-16 bg-teal-100 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">
+        📧
+       </div>
+       <h3 class="font-semibold text-gray-800 mb-2">Email</h3>
+       <p id="contactEmail" class="text-gray-600 text-sm">pariwisata@sukabumikab.go.id</p>
+       <p class="text-gray-600 text-sm mt-1">Respon dalam 1-2 hari kerja</p>
+      </div>
+     </div>
+     
+     <!-- Social Media -->
+<div class="mt-12 text-center">
+  <p class="text-gray-600 mb-4">Ikuti & hubungi kami</p>
+
+  <div class="flex justify-center gap-4">
+
+    <!-- Instagram -->
+    <a href="https://instagram.com/sigwisatasukabumi"
+       target="_blank"
+       class="w-12 h-12 bg-white rounded-xl shadow flex items-center justify-center text-xl text-pink-600 hover:shadow-lg hover:scale-105 transition">
+      <i class="fab fa-instagram"></i>
+    </a>
+
+    <!-- Website -->
+    <a href="https://wisata.sukabumikab.go.id"
+       target="_blank"
+       class="w-12 h-12 bg-white rounded-xl shadow flex items-center justify-center text-xl text-emerald-600 hover:shadow-lg hover:scale-105 transition">
+      <i class="fas fa-globe"></i>
+    </a>
+
+    <!-- Email -->
+    <a href="mailto:wisata@sukabumikab.go.id"
+       class="w-12 h-12 bg-white rounded-xl shadow flex items-center justify-center text-xl text-blue-600 hover:shadow-lg hover:scale-105 transition">
+      <i class="fas fa-envelope"></i>
+    </a>
+
+    <!-- WhatsApp -->
+    <a href="https://wa.me/6281234567890"
+       target="_blank"
+       class="w-12 h-12 bg-white rounded-xl shadow flex items-center justify-center text-xl text-green-600 hover:shadow-lg hover:scale-105 transition">
+      <i class="fab fa-whatsapp"></i>
+    </a>
+
+  </div>
+</div>
+
+    </div>
+   </section>
+   
+   <!-- Footer -->
+   <footer class="bg-gray-900 text-white py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+     <div class="grid md:grid-cols-4 gap-8 mb-8">
+      <div class="md:col-span-2">
+       <div class="flex items-center gap-3 mb-4"><!-- Government Logo -->
+        <div class="w-14 h-14 bg-white rounded-xl flex items-center justify-center p-2 shadow">
+  <img 
+    src="logo kabupaten.png" 
+    alt="Logo Kabupaten Sukabumi"
+    class="w-full h-full object-contain"
+  >
+</div>
+
+        <div>
+         <h3 class="font-bold text-lg">Pemerintah Kabupaten Sukabumi</h3>
+         <p class="text-gray-400 text-sm">Dinas Pariwisata dan Kebudayaan</p>
+        </div>
+       </div>
+       <p class="text-gray-400 text-sm max-w-md">SIG Wisata Kabupaten Sukabumi adalah inisiatif Pemerintah Daerah dalam memajukan sektor pariwisata melalui teknologi informasi geografis.</p>
+      </div>
+      <div>
+       <h4 class="font-semibold mb-4">Tautan Cepat</h4>
+       <ul class="space-y-2 text-gray-400 text-sm">
+        <li><a href="#peta" class="hover:text-emerald-400 transition">Peta Wisata</a></li>
+        <li><a href="#kategori" class="hover:text-emerald-400 transition">Kategori</a></li>
+        <li><a href="#destinasi" class="hover:text-emerald-400 transition">Destinasi</a></li>
+        <li><a href="#tentang" class="hover:text-emerald-400 transition">Tentang Kami</a></li>
+       </ul>
+      </div>
+      <div>
+       <h4 class="font-semibold mb-4">Layanan</h4>
+       <ul class="space-y-2 text-gray-400 text-sm">
+        <li><a href="#" class="hover:text-emerald-400 transition">Informasi Wisata</a></li>
+        <li><a href="#" class="hover:text-emerald-400 transition">Peta Digital</a></li>
+        <li><a href="#" class="hover:text-emerald-400 transition">Data Statistik</a></li>
+        <li><a href="#kontak" class="hover:text-emerald-400 transition">Hubungi Kami</a></li>
+       </ul>
+      </div>
+     </div>
+     <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+      <p class="text-gray-400 text-sm text-center md:text-left">© 2024 Dinas Pariwisata dan Kebudayaan Kabupaten Sukabumi. Hak Cipta Dilindungi.</p>
+      <div class="flex items-center gap-4 text-gray-400 text-sm"><a href="#" class="hover:text-emerald-400 transition">Kebijakan Privasi</a> <span>|</span> <a href="#" class="hover:text-emerald-400 transition">Syarat &amp; Ketentuan</a>
+      </div>
+     </div>
+    </div>
+   </footer>
+  </div>
+  <script>
+    // Default configuration
+    const defaultConfig = {
+      hero_title: 'SIG Wisata\nKabupaten Sukabumi',
+      hero_subtitle: 'Pemetaan & Informasi Destinasi Wisata Secara Digital',
+      about_title: 'Tentang SIG Wisata Kabupaten Sukabumi',
+      contact_phone: '(0266) 123456',
+      contact_email: 'pariwisata@sukabumikab.go.id',
+      background_color: '#065f46',
+      surface_color: '#ffffff',
+      text_color: '#1f2937',
+      primary_action_color: '#059669',
+      secondary_action_color: '#0891b2'
+    };
+
+    // Destination data
+    const destinations = {
+      'ciletuh': {
+        name: 'Geopark Ciletuh-Palabuhanratu',
+        category: 'Geopark UNESCO',
+        description: 'Geopark Ciletuh-Palabuhanratu adalah kawasan geologi yang diakui UNESCO sejak 2018. Kawasan ini memiliki bentang alam spektakuler termasuk tebing amphitheater alami, pantai-pantai eksotis, dan formasi batuan berusia jutaan tahun. Geopark ini menjadi laboratorium alam untuk studi geologi dan keanekaragaman hayati.',
+        coordinates:  {
+  lat: -7.1813951,
+  lng: 106.4633074
+},
+        price: 'Rp 20.000',
+        priceDetail: 'per orang (Paket Wisata: Rp 350.000 - Rp 500.000)',
+        image: 'ciletuh.jpg',
+        facilities: ['Area Parkir Luas', 'Pusat Informasi', 'Toilet Umum', 'Warung Makan', 'Spot Foto', 'Pemandu Wisata'],
+        tips: 'Waktu terbaik berkunjung adalah pagi hari untuk menghindari terik matahari. Gunakan alas kaki yang nyaman untuk trekking.',
+        color: '#f59e0b'
+      },
+      'pelabuhan-ratu': {
+        name: 'Pantai Pelabuhan Ratu',
+        category: 'Pantai',
+        description: 'Pantai Pelabuhan Ratu adalah destinasi pantai paling ikonik di Sukabumi dengan legenda Nyi Roro Kidul yang terkenal. Pantai ini menawarkan ombak besar yang cocok untuk surfing, sunset yang memukau, dan berbagai fasilitas wisata lengkap termasuk hotel, restoran, dan tempat pelelangan ikan.',
+        coordinates: {
+  lat: -6.977538,
+  lng: 106.4917288
+},
+        price: 'Rp 10.000',
+        priceDetail: 'per orang (Parkir: Rp 5.000 - Rp 10.000)',
+        image: 'pelabuhan ratu.jpg',
+        facilities: ['Hotel & Penginapan', 'Restoran Seafood', 'Penyewaan Papan Surfing', 'Area Parkir', 'Toilet Umum', 'Penjaga Pantai'],
+        tips: 'Hati-hati dengan ombak yang besar. Hindari berenang terlalu jauh dari pantai. Waktu terbaik untuk surfing adalah pagi hari.',
+        color: '#0ea5e9'
+      },
+      'gede-pangrango': {
+        name: 'Taman Nasional Gunung Gede Pangrango',
+        category: 'Taman Nasional',
+        description: 'Taman Nasional Gunung Gede Pangrango adalah kawasan konservasi dengan keanekaragaman hayati yang tinggi. Gunung Gede (2.958 mdpl) dan Gunung Pangrango (3.019 mdpl) menawarkan jalur pendakian menantang dengan pemandangan padang edelweiss yang ikonik di puncaknya.',
+        coordinates: {
+  lat: -6.8125756,
+  lng: 106.8987545
+},
+        price: 'Rp 72.000',
+        priceDetail: 'per orang 72.000-92.000 (Wisatawan Domestik), Rp 435.000 (Asing)',
+        image: 'gunung gede.jpg',
+        facilities: ['Pos Pendakian', 'Area Camping', 'Shelter', 'Sumber Air', 'Toilet', 'Pusat Informasi'],
+        tips: 'Pendakian memerlukan izin dari BTNGGP( https://booking.gedepangrango.org ). Bawa perlengkapan gunung lengkap. Pastikan TIDAK melakukan pendakian tanpa persiapan dan ilegal.',
+        color: '#22c55e'
+      },
+      'situ-gunung': {
+        name: 'Situ Gunung Suspension Bridge',
+        category: 'Wisata Alam',
+        description: 'Situ Gunung terkenal dengan jembatan gantung terpanjang di Asia Tenggara sepanjang 243 meter pada ketinggian 161 meter. Kawasan ini juga memiliki danau alami yang indah, hutan pinus yang asri, dan berbagai spot foto instagramable.',
+        coordinates: {
+  lat: -6.8369482,
+  lng: 106.9245204
+},
+        price: 'Rp 50.000',
+        priceDetail: 'per orang/trip , Rp 100.000 - 125.000 per orang/trip (Vip)',
+        image: 'suspension.jpg',
+        facilities: ['Jembatan Gantung', 'Area Parkir', 'Kafe & Resto', 'Toilet', 'Spot Foto', 'Flying Fox'],
+        tips: 'Kunjungi saat weekday untuk menghindari antrean panjang. Jembatan ditutup saat hujan deras atau angin kencang.',
+        color: '#10b981'
+      },
+      'curug-sawer': {
+        name: 'Curug Sawer',
+        category: 'Air Terjun',
+        description: 'Curug Sawer adalah air terjun megah setinggi 80 meter yang tersembunyi di kawasan Taman Nasional Gunung Gede Pangrango. Untuk mencapai lokasi, pengunjung harus melewati jalur trekking sejauh 4 km melalui hutan tropis yang rimbun.',
+        coordinates: {
+  lat: -6.8078157,
+  lng: 106.0801157
+},
+        price: 'Rp 15.000',
+        priceDetail: 'per orang (Sudah termasuk dalam tiket TNGGP)',
+        image: 'curug sawer.webp',
+        facilities: ['Jalur Trekking', 'Area Istirahat', 'Warung Sederhana', 'Toilet Alam'],
+        tips: 'Gunakan sepatu hiking yang kuat. Bawa bekal makanan dan air minum yang cukup. Trekking memakan waktu 2-3 jam.',
+        color: '#06b6d4'
+      },
+      'karang-hawu': {
+        name: 'Pantai Karang Hawu',
+        category: 'Pantai',
+        description: 'Pantai Karang Hawu terkenal dengan formasi batu karang vulkanik berbentuk tungku (hawu dalam bahasa Sunda) yang unik. Pantai ini menawarkan pemandangan sunset yang spektakuler dan suasana yang lebih tenang dibandingkan Pelabuhan Ratu.',
+        coordinates: {
+  lat: -6.9577059,
+  lng: 106.4604067
+},
+        price: 'Rp 10.000',
+        priceDetail: 'per orang (Parkir: Rp 5.000)',
+        image: 'karang-hawu.webp',
+        facilities: ['Area Parkir', 'Warung Makan', 'Toilet', 'Gazebo', 'Spot Foto Sunset'],
+        tips: 'Waktu terbaik berkunjung adalah sore hari untuk menikmati sunset. Hati-hati saat berjalan di bebatuan yang licin.',
+        color: '#8b5cf6'
+      }
+    };
+
+    // Show destination popup
+    function showDestination(id) {
+      const dest = destinations[id];
+      if (!dest) return;
+      
+      const popup = document.getElementById('destPopup');
+      const content = document.getElementById('destContent');
+      
+      content.innerHTML = `
+        <div class="relative">
+          <button onclick="closeDestination()" class="absolute top-0 right-0 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-600 transition">
+            ✕
+          </button>
+          <div class="w-full h-40 rounded-2xl mb-4 relative overflow-hidden">
+            <img src="${dest.image}" alt="${dest.name}" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="w-full h-full items-center justify-center text-6xl hidden" style="background: linear-gradient(135deg, ${dest.color}aa, ${dest.color});">
+              ${id === 'ciletuh' ? '🌋' : id === 'pelabuhan-ratu' ? '🏖️' : id === 'gede-pangrango' ? '🏔️' : id === 'situ-gunung' ? '🌲' : id === 'curug-sawer' ? '💧' : '🪨'}
+            </div>
+          </div>
+          <span class="inline-block px-3 py-1 rounded-full text-xs font-medium mb-2" style="background: ${dest.color}20; color: ${dest.color};">${dest.category}</span>
+          <h3 class="text-2xl font-bold text-gray-800 mb-2">${dest.name}</h3>
+          <p class="text-gray-600 text-sm mb-4">${dest.description}</p>
+          
+          <div class="bg-gray-50 rounded-xl p-4 mb-4 space-y-2">
+            <div class="flex items-center gap-2 text-sm text-gray-700">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+              <span class="font-medium">Koordinat:</span>
+              <div class="flex items-center gap-2 text-sm text-gray-700">
+  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+  </svg>
+
+  <span class="font-medium">Koordinat:</span>
+
+  <a
+    href="https://www.google.com/maps?q=${dest.coordinates.lat},${dest.coordinates.lng}"
+    target="_blank"
+    class="text-blue-600 hover:underline"
+  >
+    ${dest.coordinates.lat}, ${dest.coordinates.lng}
+  </a>
+</div>
+            </div>
+            <div class="flex items-center gap-2 text-sm">
+              <span class="text-2xl">💰</span>
+              <div>
+                <span class="font-bold text-lg" style="color: ${dest.color};">${dest.price}</span>
+                <p class="text-gray-600 text-xs">${dest.priceDetail}</p>
+              </div>
+            </div>
+          </div>
+          
+          <h4 class="font-semibold text-gray-800 mb-2">Fasilitas</h4>
+          <div class="flex flex-wrap gap-2 mb-4">
+            ${dest.facilities.map(f => `<span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs">${f}</span>`).join('')}
+          </div>
+          
+          <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4">
+            <h4 class="font-semibold text-amber-800 mb-1 flex items-center gap-2">💡 Tips Berkunjung</h4>
+            <p class="text-amber-700 text-sm">${dest.tips}</p>
+          </div>
+          
+          <button onclick="closeDestination()" class="w-full py-3 rounded-xl font-medium text-white transition" style="background: ${dest.color};">
+            Tutup
+          </button>
+        </div>
+      `;
+      
+      popup.classList.remove('hidden');
+    }
+
+    // Close destination popup
+    function closeDestination() {
+      document.getElementById('destPopup').classList.add('hidden');
+    }
+
+    // Close popup when clicking outside
+    document.getElementById('destPopup').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeDestination();
+      }
+    });
+
+    // Filter category (placeholder function)
+    function filterCategory(category) {
+      const categoryNames = {
+        'alam': 'Wisata Alam',
+        'budaya': 'Wisata Budaya',
+        'edukasi': 'Wisata Edukasi',
+        'kuliner': 'Wisata Kuliner'
+      };
+      
+      // Show inline notification
+      const notification = document.createElement('div');
+      notification.className = 'fixed top-20 left-1/2 transform -translate-x-1/2 bg-emerald-600 text-white px-6 py-3 rounded-full shadow-lg z-50 animate-bounce';
+      notification.textContent = `Menampilkan ${categoryNames[category]}`;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.remove();
+      }, 2000);
+    }
+
+    // Mobile menu toggle
+    document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+      const menu = document.getElementById('mobileMenu');
+      menu.classList.toggle('hidden');
+    });
+
+    // Close mobile menu when clicking a link
+    document.querySelectorAll('#mobileMenu a').forEach(link => {
+      link.addEventListener('click', () => {
+        document.getElementById('mobileMenu').classList.add('hidden');
+      });
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Config change handler
+    async function onConfigChange(config) {
+      const heroTitle = document.getElementById('heroTitle');
+      const heroSubtitle = document.getElementById('heroSubtitle');
+      const aboutTitle = document.getElementById('aboutTitle');
+      const contactPhone = document.getElementById('contactPhone');
+      const contactEmail = document.getElementById('contactEmail');
+      
+      if (heroTitle) {
+        heroTitle.innerHTML = (config.hero_title || defaultConfig.hero_title).replace('\n', '<br/>');
+      }
+      if (heroSubtitle) {
+        heroSubtitle.textContent = config.hero_subtitle || defaultConfig.hero_subtitle;
+      }
+      if (aboutTitle) {
+        aboutTitle.textContent = config.about_title || defaultConfig.about_title;
+      }
+      if (contactPhone) {
+        contactPhone.textContent = config.contact_phone || defaultConfig.contact_phone;
+      }
+      if (contactEmail) {
+        contactEmail.textContent = config.contact_email || defaultConfig.contact_email;
+      }
+    }
+
+    // Initialize Element SDK
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (value) => {
+                config.background_color = value;
+                window.elementSdk.setConfig({ background_color: value });
+              }
+            },
+            {
+              get: () => config.surface_color || defaultConfig.surface_color,
+              set: (value) => {
+                config.surface_color = value;
+                window.elementSdk.setConfig({ surface_color: value });
+              }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => {
+                config.text_color = value;
+                window.elementSdk.setConfig({ text_color: value });
+              }
+            },
+            {
+              get: () => config.primary_action_color || defaultConfig.primary_action_color,
+              set: (value) => {
+                config.primary_action_color = value;
+                window.elementSdk.setConfig({ primary_action_color: value });
+              }
+            },
+            {
+              get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+              set: (value) => {
+                config.secondary_action_color = value;
+                window.elementSdk.setConfig({ secondary_action_color: value });
+              }
+            }
+          ],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['hero_title', config.hero_title || defaultConfig.hero_title],
+          ['hero_subtitle', config.hero_subtitle || defaultConfig.hero_subtitle],
+          ['about_title', config.about_title || defaultConfig.about_title],
+          ['contact_phone', config.contact_phone || defaultConfig.contact_phone],
+          ['contact_email', config.contact_email || defaultConfig.contact_email]
+        ])
+      });
+    }
+  </script>
+  <script>
+const kategoriData = {
+  alam: {
+    title: "Wisata Alam",
+    items: [
+      {
+        nama: "Geopark Ciletuh",
+        gambar: "ciletuh.jpg",
+        harga: "Rp 10.000",
+        lokasi: "Ciwaru, Kec. Ciemas, Kabupaten Sukabumi, Jawa Barat 43177",
+        deskripsi: "Kawasan geopark nasional dengan tebing, air terjun, dan pantai.",
+        detail: "Akses motor, Area parkir, Toilet, Guide lokal. Jam buka: 07.00–17.00."
+      },
+      {
+        nama: "Curug Cikaso",
+        gambar: "cikaso.webp",
+        harga: "Rp 5.000",
+        lokasi: "Desa Ciniti, Cibitung, Sukabumi Regency, West Java 43172",
+        deskripsi: "Air terjun bertingkat dengan aliran sungai hijau kebiruan.",
+        detail: "Akses motor, Warung, Toilet. Disarankan datang pagi hari."
+      },
+      {
+        nama: "Curug Sawer",
+        gambar: "curug sawer.webp",
+        harga: "Rp 15.000",
+        lokasi: "Gede Pangrango, Kec. Kadudampit, Kabupaten Sukabumi, Jawa Barat 43153",
+        deskripsi: "Air terjun bertingkat kaki gunung gede pangrango dengan aliran sungai hijau kebiruan.",
+        detail: "Toilet, Ojek, Warung, Angkutan umum, Akses mobil, Wisata perahu karet, Guide lokal, Disarankan datang pagi hari."
+      }
+    ]
+  },
+
+  budaya: {
+    title: "Wisata Budaya",
+    items: [
+      {
+        nama: "Kampung Adat Ciptagelar",
+        gambar: "gelar alam.webp",
+        harga: "Gratis",
+        lokasi: "Sirnaresmi, Kabupaten Sukabumi, Jawa Barat",
+        deskripsi: "Perkampungan adat Sunda dengan tradisi leluhur.",
+        detail: "Kegiatan: Seren Taun, rumah adat, budaya lokal."
+      },
+      {
+        nama: "Kampung Adat Ciptamulya",
+        gambar: "ciptamulya.jpeg",
+        harga: "Gratis",
+        lokasi: "Sirnaresmi, Kec. Cisolok, Kabupaten Sukabumi, Jawa Barat 43366",
+        deskripsi: "Perkampungan adat Sunda dengan tradisi leluhur.",
+        detail: "Kegiatan: Seren Taun, rumah adat, budaya lokal."
+      }
+    ]
+  },
+
+  edukasi: {
+    title: "Wisata Edukasi",
+    items: [
+      {
+        nama: "Museum Prabu Siliwangi",
+        gambar: "museum prabu.jpg",
+        harga: "Rp 5.000",
+        lokasi: "Ponpes Dzikir Al Fath, Jl. Merbabu Perum Gading Kencana Asri, Komplek, Kelurahan Karangtengah, Kec. Gunungpuyuh, Kota Sukabumi, Jawa Barat 43121",
+        deskripsi: "Museum sejarah dan budaya Sunda.",
+        detail: "Cocok untuk pelajar dan penelitian sejarah."
+      }
+    ]
+  },
+
+  kuliner: {
+    title: "Wisata Kuliner",
+    items: [
+      {
+        nama: "Mochi Sukabumi",
+        gambar: "moci.jpg",
+        harga: "Rp 25.000 / box",
+        lokasi: "Gg. Kaswari No.1, Selabatu, Kec. Cikole, Kota Sukabumi, Jawa Barat 43114",
+        deskripsi: "Oleh-oleh khas Sukabumi berbahan tepung ketan.",
+        detail: "Varian kacang, coklat, keju, Dan lain-lain."
+      }
+    ]
+  }
+};
+
+function filterCategory(kategori) {
+  const data = kategoriData[kategori];
+  document.getElementById("modalTitle").innerText = data.title;
+
+  let html = "";
+  data.items.forEach(item => {
+    html += `
+      <div class="bg-gray-50 rounded-xl overflow-hidden shadow hover:shadow-lg transition">
+        <img src="${item.gambar}" class="w-full h-48 object-cover">
+        <div class="p-4 space-y-2">
+          <h4 class="text-lg font-bold text-gray-800">${item.nama}</h4>
+          <p class="text-sm text-gray-600">${item.deskripsi}</p>
+          <div class="text-sm text-gray-700">
+            <p>
+  <strong>📍 Lokasi:</strong>
+  <a 
+    href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.nama + ', ' + item.lokasi)}"
+    target="_blank"
+    class="text-blue-600 hover:underline"
+  >
+    ${item.lokasi}
+  </a>
+</p>
+
+            <p><strong> Harga tiket:</strong> ${item.harga}</p>
+          </div>
+          <p class="text-xs text-gray-500">${item.detail}</p>
+        </div>
+      </div>
+    `;
+  });
+
+  document.getElementById("modalContent").innerHTML = html;
+  document.getElementById("kategoriModal").classList.remove("hidden");
+  document.getElementById("kategoriModal").classList.add("flex");
+}
+
+function closeModal() {
+  document.getElementById("kategoriModal").classList.add("hidden");
+  document.getElementById("kategoriModal").classList.remove("flex");
+}
+</script>
+
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c4ed59fa7e9f932',t:'MTc2OTU4NTk1MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
